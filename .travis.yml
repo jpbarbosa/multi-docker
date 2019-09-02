@@ -9,7 +9,7 @@ before_install:
 script:
   - docker run -e CI=true jpbarbosa/react-test npm run test
 
-after_sucesss:
+after_success:
   - docker build -t jpbarbosa/multi-client ./client
   - docker build -t jpbarbosa/multi-nginx ./nginx
   - docker build -t jpbarbosa/multi-server ./server
