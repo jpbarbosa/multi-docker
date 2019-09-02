@@ -1,0 +1,21 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t jpbarbosa/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true jpbarbosa/react-test npm run tests -- --coverage
+
+after_sucesss:
+  - docker build -t jpbarbosa/multi-client ./client
+  - docker build -t jpbarbosa/multi-nginx ./nginx
+  - docker build -t jpbarbosa/multi-server ./server
+  - docker build -t jpbarbosa/multi-worker ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push jpbarbosa/multi-client
+  - docker push jpbarbosa/multi-nginx
+  - docker push jpbarbosa/multi-server
+  - docker push jpbarbosa/multi-worker
